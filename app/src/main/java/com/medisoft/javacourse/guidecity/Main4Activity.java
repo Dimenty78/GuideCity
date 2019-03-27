@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 public class Main4Activity extends AppCompatActivity  implements View.OnClickListener{
 
-    TextView textView, textView3, textView4, textView6, textView5, textView8, textView9, textView10;
+    TextView textView, textView3, textView4, textView6, textView5, textView9, textView10;
     Button bt_ratingUp, bt_ratingDn, bt_favorites, bt_response;
     RatingBar ratingBar;
 
@@ -46,17 +46,20 @@ public class Main4Activity extends AppCompatActivity  implements View.OnClickLis
         textView9 = (TextView) findViewById(R.id.textView9);
         textView10 = (TextView) findViewById(R.id.textView10);
 
-        bt_ratingDn = (Button) findViewById(R.id.bt_ratingDn);
-        bt_ratingUp = (Button) findViewById(R.id.bt_ratingUp);
-        bt_favorites = (Button) findViewById(R.id.bt_favorites);
-        bt_response = (Button) findViewById(R.id.bt_response);
+        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+
+        bt_favorites = (Button)findViewById(R.id.bt_favorites);
+        bt_ratingUp = (Button)findViewById(R.id.bt_ratingUp);
+        bt_ratingDn = (Button)findViewById(R.id.bt_ratingDn);
+        bt_response = (Button)findViewById(R.id.bt_response);
+
 
         bt_ratingDn.setOnClickListener(this);
         bt_ratingUp.setOnClickListener(this);
         bt_favorites.setOnClickListener(this);
         bt_response.setOnClickListener(this);
 
-        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+
 
 
 
@@ -81,14 +84,12 @@ public class Main4Activity extends AppCompatActivity  implements View.OnClickLis
         textView4.setText("Время работы: c " + worktim.split("_")[0] + " по " + worktim.split("_")[1]);
         textView6.setText("Телефон: " + telefon);
         textView5.setText("Адрес: " + adres);
-        textView9.setText("Отзывы:" + favorites);
+        textView9.setText("Отзывы:");
 
         //Отрисовка рейтинга звездочками (корректно не работает, но как относительный показатель по категориипойдет)
-        ratingBar.setNumStars(5);
-        ratingBar.setMax((int) (ratingMax - ratingMin+1));
-        ratingBar.setRating(rating - ratingMin);
+        Rating(rating,ratingMax,ratingMin);
 
-        //Комментрии
+        //Вывод в textView Комментрии
         String otzivLists[] = responses.split("::::");
         String otz = "";
         for (int t = 0; t < otzivLists.length; t++) {
@@ -105,6 +106,7 @@ public class Main4Activity extends AppCompatActivity  implements View.OnClickLis
             case R.id.bt_favorites:
                 favorites = favorites *-1;
                 txtDB = category + ";;;;" + favorites + ";;;;" + name + ";;;;" + rating + ";;;;" + description + ";;;;" + responses + ";;;;" + worktim + ";;;;" + telefon + ";;;;" + adres + ";;;;";
+                //Замена строки в базе
 
                 if(favorites > 0){
                     bt_favorites.setTextColor(Color.RED);
@@ -115,13 +117,26 @@ public class Main4Activity extends AppCompatActivity  implements View.OnClickLis
 
             case R.id.bt_ratingUp:
                 rating = rating + 1;
-                ratingBar.setRating(rating - ratingMin);
-                break;
+                if (rating > ratingMax) {ratingMax = rating;};
+                Rating(rating,ratingMax,ratingMin);
+                    break;
 
             case R.id.bt_ratingDn:
                 rating = rating - 1;
-                ratingBar.setRating(rating - ratingMin);
+                if (rating < ratingMin) {ratingMin = rating;};
+                Rating(rating,ratingMax,ratingMin);
                 break;
         }
+    }
+
+    private void Rating (Float rating, Float ratingMax, Float ratingMin){
+        ratingBar.setNumStars(5);
+        ratingBar.setMax((int) (ratingMax - ratingMin));
+        ratingBar.setRating((rating - ratingMin)*5/(ratingMax - ratingMin));
+
+        txtDB = category + ";;;;" + favorites + ";;;;" + name + ";;;;" + rating + ";;;;" + description + ";;;;" + responses + ";;;;" + worktim + ";;;;" + telefon + ";;;;" + adres + ";;;;";
+        //textView9.setText("Отзывы:" + ratingMax +"(" + ratingBar.getMax() + ")" + " " + rating +"(" + ratingBar.getRating() + ")" + " " + ratingMin + "(0)");
+
+        //Замена строки в базе
     }
 }
