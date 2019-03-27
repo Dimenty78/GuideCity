@@ -35,13 +35,26 @@ public class Main3Activity extends AppCompatActivity {
 
         ArrayList<CityPoint> listsPoi = new ArrayList<CityPoint>();
 
+        int ratingMax = -9999;
+        int ratingMin = 9999;
+
+        int rating;
+
         for (int t = 0; t < massLists.length; t++) {
             if (massLists[t].split(";;;;")[0].contains(txtId)) {
+
+                rating = Integer.parseInt(massLists[t].split(";;;;")[3]);
+
+                if (rating > ratingMax){ratingMax = rating;}
+                if (rating <= ratingMin){ratingMin = rating;}
+
                 listsPoi.add(new CityPoint(t, massLists[t].split(";;;;")[0], massLists[t].split(";;;;")[1], massLists[t].split(";;;;")[2],Integer.parseInt(massLists[t].split(";;;;")[3]), massLists[t].split(";;;;")[4], massLists[t].split(";;;;")[5], massLists[t].split(";;;;")[6], massLists[t].split(";;;;")[7], massLists[t].split(";;;;")[8]));
             }
         }
 
         final ArrayList<String> listId = new ArrayList<String>();
+        final int finalRatingMax = ratingMax;
+        final int finalRatingMin = ratingMin;
 
         // Сортировка списка по Алфавиту
         if (viewSort ==  1) {
@@ -65,11 +78,14 @@ public class Main3Activity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // Передача Экран3 параметров выбора категории и переключение на Экран2
                     Intent intent = new Intent(Main3Activity.this, Main4Activity.class);
+                    intent.putExtra("ratingMax", "" + finalRatingMax);
+                    intent.putExtra("ratingMin", "" + finalRatingMin);
                     intent.putExtra("list", "" + txtDB.split("\n")[Integer.parseInt(listId.get((int) id).split(";;;;")[1])]);
                     startActivity(intent);;
                 }
             });
         }
+
 
 
         // Сортировка списка по Рейтингу
@@ -96,6 +112,8 @@ public class Main3Activity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // Передача Экран3 параметров выбора категории и переключение на Экран2
                     Intent intent = new Intent(Main3Activity.this, Main4Activity.class);
+                    intent.putExtra("ratingMax", "" + finalRatingMax);
+                    intent.putExtra("ratingMin", "" + finalRatingMin);
                     intent.putExtra("list", "" + txtDB.split("\n")[Integer.parseInt(listId.get((int) id).split(";;;;")[1])]);
                     startActivity(intent);;
                 }
@@ -130,6 +148,8 @@ public class Main3Activity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // Передача Экран3 параметров выбора категории и переключение на Экран2
                     Intent intent = new Intent(Main3Activity.this, Main4Activity.class);
+                    intent.putExtra("ratingMax", "" + finalRatingMax);
+                    intent.putExtra("ratingMin", "" + finalRatingMin);
                     intent.putExtra("list", "" + txtDB.split("\n")[Integer.parseInt(listId.get((int) id).split(";;;;")[1])]);
                     startActivity(intent);;
                 }

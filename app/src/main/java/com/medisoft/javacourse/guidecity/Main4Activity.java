@@ -34,7 +34,6 @@ public class Main4Activity extends AppCompatActivity {
         textView4 = (TextView) findViewById(R.id.textView4);
         textView6 = (TextView) findViewById(R.id.textView6);
         textView5 = (TextView) findViewById(R.id.textView5);
-        textView8 = (TextView) findViewById(R.id.textView8);
         textView9 = (TextView) findViewById(R.id.textView9);
         textView10 = (TextView) findViewById(R.id.textView10);
 
@@ -44,8 +43,12 @@ public class Main4Activity extends AppCompatActivity {
 
         ratingBar = (RatingBar) findViewById(R.id.ratingBar);
 
+
+
         Intent intent = getIntent();
         String txtDB = intent.getStringExtra("list");
+        int ratingMax = Integer.parseInt(intent.getStringExtra("ratingMax"));
+        int ratingMin = Integer.parseInt(intent.getStringExtra("ratingMin"));
 
         category = txtDB.split(";;;;")[0];
         favorites = Integer.parseInt(txtDB.split(";;;;")[1]);
@@ -68,10 +71,14 @@ public class Main4Activity extends AppCompatActivity {
         textView4.setText("Время работы: c " + worktim.split("_")[0] + " по " + worktim.split("_")[1]);
         textView6.setText("Телефон: " + telefon);
         textView5.setText("Адрес: " + adres);
-        textView8.setText("Рейтинг: " + rating);
         textView9.setText("Отзывы:");
 
-        ratingBar.setRating(rating);
+        //textView9.setText("Отзывы: " + ratingMax + "(" + (ratingMax - ratingMin) + ")" + " " + rating + "(" + (rating - ratingMin) + "-" + Math.round((rating - ratingMin)*100/(ratingMax - ratingMin)) + ")" + " " + ratingMin + "(0)");
+
+
+        ratingBar.setNumStars(5);
+        ratingBar.setMax(ratingMax - ratingMin);
+        ratingBar.setRating(rating - ratingMin);
 
         String otzivLists[] = responses.split("::::");
         String otz = "";
