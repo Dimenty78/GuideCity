@@ -4,30 +4,39 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class Main4Activity extends AppCompatActivity {
+public class Main4Activity extends AppCompatActivity  implements View.OnClickListener{
 
     TextView textView, textView3, textView4, textView6, textView5, textView8, textView9, textView10;
-    Button bt_ratingUp, bt_ratingDn, bt_favorites;
+    Button bt_ratingUp, bt_ratingDn, bt_favorites, bt_response;
     RatingBar ratingBar;
 
     private String category;
     private int favorites;
     private String name;
-    private int rating;
+    private float rating;
     private String description;
     private String responses;
     private String worktim;
     private String telefon;
     private String adres;
+    private String txtDB;
+    private float ratingMin;
+    private float ratingMax;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main4);
+
+        Intent intent = getIntent();
+        txtDB = intent.getStringExtra("list");
+        ratingMax = Integer.parseInt(intent.getStringExtra("ratingMax"));
+        ratingMin = Integer.parseInt(intent.getStringExtra("ratingMin"));
 
         textView = (TextView) findViewById(R.id.textView);
         textView3 = (TextView) findViewById(R.id.textView3);
@@ -40,15 +49,16 @@ public class Main4Activity extends AppCompatActivity {
         bt_ratingDn = (Button) findViewById(R.id.bt_ratingDn);
         bt_ratingUp = (Button) findViewById(R.id.bt_ratingUp);
         bt_favorites = (Button) findViewById(R.id.bt_favorites);
+        bt_response = (Button) findViewById(R.id.bt_response);
+
+        bt_ratingDn.setOnClickListener(this);
+        bt_ratingUp.setOnClickListener(this);
+        bt_favorites.setOnClickListener(this);
+        bt_response.setOnClickListener(this);
 
         ratingBar = (RatingBar) findViewById(R.id.ratingBar);
 
 
-
-        Intent intent = getIntent();
-        String txtDB = intent.getStringExtra("list");
-        int ratingMax = Integer.parseInt(intent.getStringExtra("ratingMax"));
-        int ratingMin = Integer.parseInt(intent.getStringExtra("ratingMin"));
 
         category = txtDB.split(";;;;")[0];
         favorites = Integer.parseInt(txtDB.split(";;;;")[1]);
@@ -60,7 +70,7 @@ public class Main4Activity extends AppCompatActivity {
         telefon = txtDB.split(";;;;")[7];
         adres = txtDB.split(";;;;")[8];
 
-        if(favorites == 1){
+        if(favorites > 0){
             bt_favorites.setTextColor(Color.RED);
         }else {
             bt_favorites.setTextColor(Color.rgb(155,155,155));
@@ -71,22 +81,47 @@ public class Main4Activity extends AppCompatActivity {
         textView4.setText("Время работы: c " + worktim.split("_")[0] + " по " + worktim.split("_")[1]);
         textView6.setText("Телефон: " + telefon);
         textView5.setText("Адрес: " + adres);
-        textView9.setText("Отзывы:");
+        textView9.setText("Отзывы:" + favorites);
 
-        //textView9.setText("Отзывы: " + ratingMax + "(" + (ratingMax - ratingMin) + ")" + " " + rating + "(" + (rating - ratingMin) + "-" + Math.round((rating - ratingMin)*100/(ratingMax - ratingMin)) + ")" + " " + ratingMin + "(0)");
-
-
+        //Отрисовка рейтинга звездочками (корректно не работает, но как относительный показатель по категориипойдет)
         ratingBar.setNumStars(5);
-        ratingBar.setMax(ratingMax - ratingMin);
+        ratingBar.setMax((int) (ratingMax - ratingMin+1));
         ratingBar.setRating(rating - ratingMin);
 
+        //Комментрии
         String otzivLists[] = responses.split("::::");
         String otz = "";
-
         for (int t = 0; t < otzivLists.length; t++) {
             otz = otz + ">> " + otzivLists[t] + "\n------------------" + "\n";
         }
-
         textView10.setText(otz);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+
+            case R.id.bt_favorites:
+                favorites = favorites *-1;
+                txtDB = category + ";;;;" + favorites + ";;;;" + name + ";;;;" + rating + ";;;;" + description + ";;;;" + responses + ";;;;" + worktim + ";;;;" + telefon + ";;;;" + adres + ";;;;";
+
+                if(favorites > 0){
+                    bt_favorites.setTextColor(Color.RED);
+                }else {
+                    bt_favorites.setTextColor(Color.rgb(155,155,155));
+                }
+                break;
+
+            case R.id.bt_ratingUp:
+                rating = rating + 1;
+                ratingBar.setRating(rating - ratingMin);
+                break;
+
+            case R.id.bt_ratingDn:
+                rating = rating - 1;
+                ratingBar.setRating(rating - ratingMin);
+                break;
+        }
     }
 }
