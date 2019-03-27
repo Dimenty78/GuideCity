@@ -5,12 +5,14 @@ import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class Main4Activity extends AppCompatActivity {
 
     TextView textView, textView3, textView4, textView6, textView5, textView8, textView9, textView10;
     Button bt_ratingUp, bt_ratingDn, bt_favorites;
+    RatingBar ratingBar;
 
     private String category;
     private int favorites;
@@ -40,6 +42,8 @@ public class Main4Activity extends AppCompatActivity {
         bt_ratingUp = (Button) findViewById(R.id.bt_ratingUp);
         bt_favorites = (Button) findViewById(R.id.bt_favorites);
 
+        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+
         Intent intent = getIntent();
         String txtDB = intent.getStringExtra("list");
 
@@ -66,6 +70,8 @@ public class Main4Activity extends AppCompatActivity {
         textView5.setText("Адрес: " + adres);
         textView8.setText("Рейтинг: " + rating);
         textView9.setText("Отзывы:");
+
+        ratingBar.setRating(rating);
 
         String otzivLists[] = responses.split("::::");
         String otz = "";
