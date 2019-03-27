@@ -2,6 +2,7 @@ package com.medisoft.javacourse.guidecity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -87,7 +88,7 @@ public class Main4Activity extends AppCompatActivity  implements View.OnClickLis
         textView9.setText("Отзывы:");
 
         //Отрисовка рейтинга звездочками (корректно не работает, но как относительный показатель по категориипойдет)
-        Rating(rating,ratingMax,ratingMin);
+        rating = Rating(rating,ratingMax,ratingMin);
 
         //Вывод в textView Комментрии
         String otzivLists[] = responses.split("::::");
@@ -105,8 +106,8 @@ public class Main4Activity extends AppCompatActivity  implements View.OnClickLis
 
             case R.id.bt_favorites:
                 favorites = favorites *-1;
-                txtDB = category + ";;;;" + favorites + ";;;;" + name + ";;;;" + rating + ";;;;" + description + ";;;;" + responses + ";;;;" + worktim + ";;;;" + telefon + ";;;;" + adres + ";;;;";
                 //Замена строки в базе
+                OverwriteDB();
 
                 if(favorites > 0){
                     bt_favorites.setTextColor(Color.RED);
@@ -118,25 +119,33 @@ public class Main4Activity extends AppCompatActivity  implements View.OnClickLis
             case R.id.bt_ratingUp:
                 rating = rating + 1;
                 if (rating > ratingMax) {ratingMax = rating;};
-                Rating(rating,ratingMax,ratingMin);
+                rating = Rating(rating,ratingMax,ratingMin);
                     break;
 
             case R.id.bt_ratingDn:
                 rating = rating - 1;
                 if (rating < ratingMin) {ratingMin = rating;};
-                Rating(rating,ratingMax,ratingMin);
+                rating = Rating(rating,ratingMax,ratingMin);
                 break;
         }
     }
 
-    private void Rating (Float rating, Float ratingMax, Float ratingMin){
+    private int Rating (Float rating, Float ratingMax, Float ratingMin){
         ratingBar.setNumStars(5);
         ratingBar.setMax((int) (ratingMax - ratingMin));
         ratingBar.setRating((rating - ratingMin)*5/(ratingMax - ratingMin));
-
-        txtDB = category + ";;;;" + favorites + ";;;;" + name + ";;;;" + rating + ";;;;" + description + ";;;;" + responses + ";;;;" + worktim + ";;;;" + telefon + ";;;;" + adres + ";;;;";
-        //textView9.setText("Отзывы:" + ratingMax +"(" + ratingBar.getMax() + ")" + " " + rating +"(" + ratingBar.getRating() + ")" + " " + ratingMin + "(0)");
-
         //Замена строки в базе
+        OverwriteDB();
+
+        return (int)Math.round(rating);
+    }
+
+    private void OverwriteDB () {
+        FileRecRead file = new FileRecRead();
+        String txtDbRewrite = file.ReadFile(Environment.getExternalStorageDirectory().getAbsolutePath(), "CityBD.bd");
+        String txtDbRewrite0 = txtDbRewrite.replace(txtDB, category + ";;;;" + favorites + ";;;;" + name + ";;;;" + (int)Math.round(rating) + ";;;;" + description + ";;;;" + responses + ";;;;" + worktim + ";;;;" + telefon + ";;;;" + adres + ";;;;");
+        txtDB = category + ";;;;" + favorites + ";;;;" + name + ";;;;" + (int)Math.round(rating) + ";;;;" + description + ";;;;" + responses + ";;;;" + worktim + ";;;;" + telefon + ";;;;" + adres + ";;;;";
+        file.DeleteFile(Environment.getExternalStorageDirectory().getAbsolutePath(),"CityBD.bd");
+        file.SaveFileBD(Environment.getExternalStorageDirectory().getAbsolutePath(), txtDbRewrite0,"CityBD.bd");
     }
 }

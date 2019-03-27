@@ -1,5 +1,7 @@
 package com.medisoft.javacourse.guidecity;
 
+import android.os.Environment;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -23,6 +25,20 @@ public class FileRecRead {
         catch (IOException e)
         {
             e.printStackTrace();
+        }
+    }
+
+
+    public void DeleteFile (String filePath, String fileName){
+
+        File file = new File(filePath, fileName);
+        file.delete();
+        if(file.exists()){
+            try {
+                file.getCanonicalFile().delete();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
